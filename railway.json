@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "vite",
+    "buildCommand": "npm run build"
+  },
+  "start": {
+    "command": ""
+  },
+  "outputDirectory": "dist"
+}
