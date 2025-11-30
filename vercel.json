@@ -1,0 +1,12 @@
+{
+  "builds": [
+    { "src": "user/package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "lp/package.json",   "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "admin/package.json","use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    { "src": "/user/(.*)",  "dest": "/user" },
+    { "src": "/lp/(.*)",    "dest": "/lp" },
+    { "src": "/admin/(.*)", "dest": "/admin" }
+  ]
+}
