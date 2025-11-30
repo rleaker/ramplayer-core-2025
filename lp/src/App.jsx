@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+const CORE_API = 'https://ramplayer-core-2025-production-c338.up.railway.app'
 export default function App() {
   const [spread, setSpread] = useState({ USDC: 0.28, USDT: 0.30, BTC: 0.45 })
 
