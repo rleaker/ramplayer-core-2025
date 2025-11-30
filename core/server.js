@@ -9,7 +9,24 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(cors());
 app.use(express.json());
+// ROOT + HEALTH – makes the domain instantly useful
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>SPLAT CORE LIVE</h1>
+    <p>Backend running. Apaylo balance: <b>50,000 CAD</b></p>
+    <p><a href="/health">/health</a> • <a href="/quotes">/quotes</a></p>
+    <pre>USDC • USDT • BTC real-time middleware</pre>
+  `)
+})
 
+app.get('/health', (req, res) => {
+  res.json({
+    status: "SPLAT CORE LIVE",
+    apaylo_balance: `${apayloBalance.toLocaleString()} CAD`,
+    uptime: process.uptime().toFixed(0) + "s",
+    timestamp: new Date().toISOString()
+  })
+})
 // Mock data
 let apayloBalance = 50000; // CAD
 const approvedWallets = {
