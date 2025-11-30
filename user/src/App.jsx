@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import io from 'socket.io-client'
 
-const API = import.meta.env.PROD 
-  ? 'https://splat-core.up.railway.app' 
-  : 'http://localhost:3001'
+const API = 'https://ramplayer-core-2025-production-c338.up.railway.app'
 
 export default function App() {
   const [balance, setBalance] = useState(50000)
