@@ -1,3 +1,4 @@
+const CORE_API = 'https://ramplayer-core-2025-production-c338.up.railway.app'
 export default function App() {
   return (
     <div className="max-w-6xl mx-auto p-8">
