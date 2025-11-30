@@ -1,14 +1,17 @@
-# RampLayer Core 2025
+# SPLAT – Canadian Institutional FIAT↔Crypto Middleware
 
-## Quick Deploy
-1. Fork this repo.
-2. Vercel: Connect GitHub → Deploy /widget branch.
-3. Railway: Connect GitHub → Deploy /backend branch.
-4. Supabase: Run schema.sql.
+## Live Panels
+- Business User: https://splat-user.vercel.app
+- Liquidity Provider: https://splat-lp.vercel.app  
+- Splat Admin: https://splat-admin.vercel.app
+- Core API: https://splat-core.up.railway.app
 
-## Env Vars (GitHub Secrets)
-- SUPABASE_URL=your_supabase_url
-- SUPABASE_ANON_KEY=your_key
-- STRIPE_SECRET_KEY=sk_test_...
+## Deploy Instructions
+1. Fork this repo
+2. Deploy `/user`, `/lp`, `/admin` → Vercel (auto)
+3. Deploy `/core` → Railway
+4. Add env var in Railway: `PORT=3001`
 
-Test: POST to /ramp with {amountCAD: 100, direction: 'on'}
+10 bps revenue share. Real-time quotes. Wallet approval. Blockchain monitoring.
+
+The torus is live.
