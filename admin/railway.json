@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "PACKS",
+    "buildCommand": "npm install && npm run build"
+  },
+  "start": {
+    "command": ""
+  },
+  "outputDirectory": "dist"
+}
