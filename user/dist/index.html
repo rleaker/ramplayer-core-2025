@@ -6,88 +6,173 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body { background: #000; color: #fff; font-family: system-ui; min-height: 100vh; padding: 2rem; }
-    .container { max-width: 80rem; margin: 0 auto; }
-    h1 { text-align: center; font-size: 3rem; background: linear-gradient(to right, #c084fc, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 2rem; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .card { background: rgba(31,41,55,0.8); padding: 2rem; border-radius: 1rem; border: 1px solid #4f46e5; }
-    h2 { font-size: 1.5rem; margin-bottom: 1rem; }
-    select, input { width: 100%; padding: 1rem; background: #1f2937; border: 1px solid #4b5563; border-radius: 0.5rem; color: #fff; margin-bottom: 1rem; }
-    button { width: 100%; padding: 1rem; background: #7c3aed; border: none; border-radius: 0.5rem; color: white; font-size: 1.125rem; cursor: pointer; }
-    button:hover { background: #6d28d9; }
-    .status { margin-top: 1rem; padding: 1rem; background: #1f2937; border-radius: 0.5rem; }
-    .quote { padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; background: #1f2937; }
-    .active { border-color: #7c3aed; background: #4f46e5; }
-    .hash { font-family: monospace; word-break: break-all; color: #60a5fa; font-size: 0.875rem; margin-top: 1rem; }
+    .container { max-width: 90rem; margin: 0 auto; }
+    h1 { text-align: center; font-size: 3.5rem; background: linear-gradient(to right, #c084fc, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 3rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+    .card { background: rgba(31,41,55,0.9); backdrop-blur: blur(12px); padding: 3rem; border-radius: 1.5rem; border: 1px solid #4f46e5; }
+    h2 { font-size: 2rem; margin-bottom: 2rem; }
+    select, input { width: 100%; padding: 1rem; background: #1f2937; border: 1px solid #4b5563; border-radius: 0.75rem; color: #fff; font-size: 1.1rem; margin-bottom: 1rem; }
+    button { padding: 1rem 2rem; margin: 0.5rem; border: none; border-radius: 0.75rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .buy { background: #059669; }
+    .sell { background: #dc2626; }
+    .active { transform: scale(1.05); box-shadow: 0 0 20px rgba(139,92,246,0.6); }
+    .execute { width: 100%; padding: 1.5rem; background: #7c3aed; font-size: 1.5rem; margin-top: 2rem; }
+    .execute:hover { background: #6d28d9; }
+    .status { margin-top: 1.5rem; padding: 1rem; background: #1f2937; border-radius: 0.75rem; font-size: 1.2rem; }
+    .error { color: #fca5a5; }
+    .hash { margin-top: 1rem; padding: 1rem; background: #1f2937; border-radius: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+    .copy { cursor: pointer; color: #60a5fa; }
+    .quote-box { padding: 2rem; background: #1f2937; border-radius: 1rem; border: 2px solid #7c3aed; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>SPLAT Business Dashboard</h1>
     <div class="grid">
+      <!-- LEFT: Trade Panel -->
       <div class="card">
         <h2>Execute Trade</h2>
-        <p class="text-2xl mb-4">Balance: <span class="text-green-400 font-bold">$50,000 CAD</span></p>
+        <p class="text-3xl mb-6">Balance: <span id="balance" class="text-green-400 font-bold">$50,000 CAD</span></p>
+
+        <div style="margin-bottom: 2rem;">
+          <button id="buyBtn" class="buy active">BUY CRYPTO</button>
+          <button id="sellBtn" class="sell">SELL CRYPTO</button>
+        </div>
+
+        <label>Select LP</label>
         <select id="lp">
-          <option value="newton">Newton</option>
+          <option value="splashfx">Splash FX</option>
           <option value="virgocx">VirgoCX</option>
           <option value="bitbuy">Bitbuy</option>
         </select>
+
+        <label>Select Crypto</label>
         <select id="token">
           <option>USDC</option>
           <option>USDT</option>
           <option>BTC</option>
         </select>
-        <input type="number" id="amount" value="10000" placeholder="Amount">
-        <button onclick="executeTrade()">EXECUTE SELL</button>
+
+        <label>Select Wallet (Whitelisted)</label>
+        <select id="wallet">
+          <option value="0x71C7...976F">0x71C7...976F (USDC/USDT)</option>
+          <option value="0x17a9...f8e9">0x17a9...f8e9 (BTC)</option>
+        </select>
+
+        <label id="amountLabel">Amount (CAD)</label>
+        <input type="number" id="amount" value="10000" min="1">
+        <div id="error" class="error"></div>
+
+        <button id="execute" class="execute">EXECUTE BUY</button>
+
         <div id="status" class="status">Ready</div>
-        <div id="hash" class="hash"></div>
+        <div id="hashBox" class="hash" style="display:none;">
+          <span id="hash"></span>
+          <span class="copy" onclick="copyHash()">Copy</span>
+        </div>
       </div>
+
+      <!-- RIGHT: Live Quote from Selected LP -->
       <div class="card">
-        <h2>Live Quotes (CAD)</h2>
-        <div id="quotes"></div>
+        <h2>Live Quote – <span id="lpName">Splash FX</span></h2>
+        <div id="quoteBox" class="quote-box text-center text-3xl">
+          Loading live rate...
+        </div>
       </div>
     </div>
   </div>
+
   <script>
     const API = 'https://ramplayer-core-2025-production-c338.up.railway.app';
     let balance = 50000;
-    let quotes = {};
+    let currentQuotes = {};
+    let isBuy = true;
 
-    function loadQuotes() {
-      fetch(API + '/quotes').then(r => r.json()).then(data => {
-        quotes = data.quotes;
-        document.getElementById('quotes').innerHTML = Object.entries(quotes).map(([lp, r]) => `
-          <div class="quote ${document.getElementById('lp').value === lp ? 'active' : ''}">
-            <p class="font-bold">${lp.toUpperCase()}</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-              <div>USDC: <b>${r.USDC}</b></div>
-              <div>USDT: <b>${r.USDT}</b></div>
-              <div>BTC: <b>${r.BTC.toLocaleString()}</b></div>
-            </div>
-          </div>
-        `).join('');
-      });
+    const els = {
+      buyBtn: document.getElementById('buyBtn'),
+      sellBtn: document.getElementById('sellBtn'),
+      lp: document.getElementById('lp'),
+      token: document.getElementById('token'),
+      amount: document.getElementById('amount'),
+      amountLabel: document.getElementById('amountLabel'),
+      execute: document.getElementById('execute'),
+      status: document.getElementById('status'),
+      balanceEl: document.getElementById('balance'),
+      lpName: document.getElementById('lpName'),
+      quoteBox: document.getElementById('quoteBox'),
+      error: document.getElementById('error'),
+      hashBox: document.getElementById('hashBox'),
+      hash: document.getElementById('hash')
+    };
+
+    // Toggle Buy / Sell
+    els.buyBtn.onclick = () => { isBuy = true; updateMode(); };
+    els.sellBtn.onclick = () => { isBuy = false; updateMode(); };
+
+    function updateMode() {
+      els.buyBtn.classList.toggle('active', isBuy);
+      els.sellBtn.classList.toggle('active', !isBuy);
+      els.amountLabel.textContent = isBuy ? 'Amount (CAD)' : `Amount (${els.token.value})`;
+      els.execute.textContent = isBuy ? 'EXECUTE BUY' : 'EXECUTE SELL';
+      els.error.textContent = '';
     }
 
-    function executeTrade() {
-      const lp = document.getElementById('lp').value;
-      const token = document.getElementById('token').value;
-      const amount = Number(document.getElementById('amount').value);
-      document.getElementById('status').innerHTML = 'Processing...';
+    // Refresh quotes every 5 seconds
+    function refreshQuotes() {
+      fetch(API + '/quotes').then(r => r.json()).then(data => {
+        currentQuotes = data.quotes;
+        const lp = els.lp.value;
+        const rates = currentQuotes[lp] || {USDC: 1.378, USDT: 1.376, BTC: 145000};
+        els.lpName.textContent = lp.toUpperCase();
+        els.quoteBox.innerHTML = `
+          <div>USDC: <b>${rates.USDC}</b></div>
+          <div style="margin:1rem 0">USDT: <b>${rates.USDT}</b></div>
+          <div>BTC: <b>${rates.BTC.toLocaleString()}</b></div>
+        `;
+      });
+    }
+    setInterval(refreshQuotes, 5000);
+    refreshQuotes();
+
+    // Execute trade
+    els.execute.onclick = () => {
+      const amount = Number(els.amount.value);
+      if (isBuy && amount > balance) {
+        els.error.textContent = 'Insufficient balance';
+        return;
+      }
+      els.status.textContent = 'Processing FIAT & crypto legs...';
+      els.hashBox.style.display = 'none';
+
       fetch(API + '/transaction', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({amountCAD: amount, direction: 'sell', exchange: lp, token})
-      }).then(r => r.json()).then(data => {
+        body: JSON.stringify({
+          exchange: els.lp.value,
+          token: els.token.value,
+          amount: amount,
+          direction: isBuy ? 'buy' : 'sell',
+          wallet: els.wallet.value
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
         balance = data.newBalance;
-        document.getElementById('status').innerHTML = `Success – Fee: $${data.fee}`;
-        document.getElementById('hash').innerHTML = `Tx: ${data.hash}`;
-        document.querySelector('.text-green-400').innerHTML = '$' + balance.toLocaleString() + ' CAD';
-        loadQuotes();
-      }).catch(() => document.getElementById('status').innerHTML = 'Failed');
+        els.balanceEl.textContent = '$' + balance.toLocaleString() + ' CAD';
+        els.status.textContent = `Success – Fee: $${data.fee}`;
+        els.hash.textContent = data.hash;
+        els.hashBox.style.display = 'flex';
+      })
+      .catch(() => els.status.textContent = 'Transaction failed');
+    };
+
+    function copyHash() {
+      navigator.clipboard.writeText(els.hash.textContent);
+      alert('Hash copied to clipboard!');
     }
 
-    loadQuotes();
+    // Init
+    updateMode();
   </script>
 </body>
 </html>
