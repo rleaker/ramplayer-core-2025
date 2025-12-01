@@ -4,28 +4,55 @@
   <meta charset="utf-8">
   <title>SPLAT LP Panel</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script type="module">
-    import React from 'https://esm.sh/react@18';
-    import ReactDOM from 'https://esm.sh/react-dom@18';
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <style>
+    body { background: #1f2937; color: #f9fafb; font-family: system-ui; min-height: 100vh; }
+    .container { max-width: 4rem; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 2.25rem; font-weight: bold; margin-bottom: 2rem; }
+    .card { background: #111827; padding: 2rem; border-radius: 0.75rem; }
+    h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    input { width: 100%; padding: 1rem; background: #374151; border-radius: 0.5rem; border: none; color: white; font-size: 1.125rem; }
+    button { padding: 1rem 2rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-weight: bold; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
     function App() {
-      const [s,setS] = React.useState({USDC:0.28,USDT:0.30,BTC:0.45});
-      return React.createElement('div', {className:"max-w-4xl mx-auto p-8 text-white"},
-        React.createElement('h1', {className:"text-4xl font-bold mb-8"}, "Liquidity Provider Panel – VirgoCX"),
-        React.createElement('div', {className:"bg-gray-900 p-8 rounded-xl"},
-          React.createElement('h2', {className:"text-2xl mb-6"}, "Set Your Spread (%)"),
-          React.createElement('div', {className:"grid grid-cols-3 gap-6"},
-            ['USDC','USDT','BTC'].map(t=>React.createElement('div', {key:t},
-              React.createElement('label', null, t+"/CAD"),
-              React.createElement('input', {type:"number",step:"0.01",value:s[t],onChange:e=>setS({...s,[t]:+e.target.value}),className:"w-full p-4 bg-gray-800 rounded text-2xl"})
-            ))
-          ),
-          React.createElement('button', {className:"mt-8 px-12 py-4 bg-green-600 rounded text-xl font-bold"}, "PUSH LIVE SPREAD")
-        ")
-        )
+      const [spread, setSpread] = useState({ USDC: 0.28, USDT: 0.30, BTC: 0.45 });
+      return (
+        <div className="container">
+          <h1>Liquidity Provider Panel – VirgoCX</h1>
+          <div className="card">
+            <h2>Set Your Spread (%)</h2>
+            <div className="grid">
+              <div>
+                <label>USDC/CAD</label>
+                <input type="number" step="0.01" value={spread.USDC} onChange={e => setSpread({...spread, USDC: Number(e.target.value)})} />
+              </div>
+              <div>
+                <label>USDT/CAD</label>
+                <input type="number" step="0.01" value={spread.USDT} onChange={e => setSpread({...spread, USDT: Number(e.target.value)})} />
+              </div>
+              <div>
+                <label>BTC/CAD</label>
+                <input type="number" step="0.01" value={spread.BTC} onChange={e => setSpread({...spread, BTC: Number(e.target.value)})} />
+              </div>
+            </div>
+            <button>PUSH LIVE SPREAD</button>
+          </div>
+          <div className="card mt-8">
+            <h2>Approved Wallets</h2>
+            <div>0x71C7656EC7ab88b098defB751B7401B5f6d8976F (USDC/USDT) – Approved</div>
+            <div>0x17a9e2919d12e9d1d2c9f9d8d8e9f8e9f8e9f8e9 (BTC) – Approved</div>
+          </div>
+        </div>
       );
     }
-    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
-</head>
-<body class="bg-gray-950 min-h-screen"><div id="root"></div></body>
+</body>
 </html>
