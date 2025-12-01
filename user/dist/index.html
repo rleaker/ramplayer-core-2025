@@ -1,64 +1,93 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="utf-8"><title>SPLAT Business Dashboard</title>
+  <meta charset="utf-8">
+  <title>SPLAT Business Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #000; color: #fff; font-family: system-ui; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 80rem; margin: 0 auto; }
+    h1 { text-align: center; font-size: 3rem; background: linear-gradient(to right, #c084fc, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 2rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .card { background: rgba(31,41,55,0.8); padding: 2rem; border-radius: 1rem; border: 1px solid #4f46e5; }
+    h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+    select, input { width: 100%; padding: 1rem; background: #1f2937; border: 1px solid #4b5563; border-radius: 0.5rem; color: #fff; margin-bottom: 1rem; }
+    button { width: 100%; padding: 1rem; background: #7c3aed; border: none; border-radius: 0.5rem; color: white; font-size: 1.125rem; cursor: pointer; }
+    button:hover { background: #6d28d9; }
+    .status { margin-top: 1rem; padding: 1rem; background: #1f2937; border-radius: 0.5rem; }
+    .quote { padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; background: #1f2937; }
+    .active { border-color: #7c3aed; background: #4f46e5; }
+    .hash { font-family: monospace; word-break: break-all; color: #60a5fa; font-size: 0.875rem; margin-top: 1rem; }
+  </style>
 </head>
-<body class="bg-black text-white min-h-screen">
-  <div id="root"></div>
- <script type="text/babel" data-type="module">
-    const {useState,useEffect}=React;
-    const API='https://ramplayer-core-2025-production-c338.up.railway.app';
-    function App(){
-      const [bal,setBal]=useState(50000);
-      const [quotes,setQuotes]=useState({});
-      const [form,setForm]=useState({lp:'virgocx',token:'USDC',amount:10000});
-      const [msg,setMsg]=useState('Ready');
-      const [hash,setHash]=useState('');
-      useEffect(()=>{axios.get(API+'/quotes').then(r=>setQuotes(r.data.quotes));},[]);
-      const sell=async()=>{setMsg('Processing...');
-        try{const r=await axios.post(API+'/transaction',form);
-          setBal(r.data.newBalance);setMsg(`Success – Fee: $${r.data.fee}`);setHash(r.data.hash);
-        }catch{setMsg('Failed');}};
-      return (
-        <div className="p-8 max-w-7xl mx-auto">
-          <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent mb-12">SPLAT Business Dashboard</h1>
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div className="bg-gray-900/90 backdrop-blur p-12 rounded-3xl border border-purple-700">
-              <p className="text-4xl mb-8">Balance: <span className="text-green-400 font-bold">${bal.toLocaleString()} CAD</span></p>
-              <select className="w-full p-4 bg-gray-800 rounded text-xl mb-4" value={form.lp} onChange={e=>setForm({...form,lp:e.target.value})}>
-                <option value="newton">Newton</option><option value="virgocx">VirgoCX</option><option value="bitbuy">Bitbuy</option>
-              </select>
-              <select className="w-full p-4 bg-gray-800 rounded text-xl mb-6" value={form.token} onChange={e=>setForm({...form,token:e.target.value})}>
-                <option>USDC</option><option>USDT</option><option>BTC</option>
-              </select>
-              <input type="number" className="w-full p-4 bg-gray-800 rounded text-xl mb-8" value={form.amount} onChange={e=>setForm({...form,amount:+e.target.value})}/>
-              <button onClick={sell} className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-3xl font-bold hover:scale-105 transition">EXECUTE SELL</button>
-              <div className="mt-8 text-2xl">{msg}</div>
-              {hash && <div className="mt-4 text-cyan-400 break-all text-sm">Tx: {hash}</div>}
-            </div>
-            <div className="space-y-8">
-              <h2 className="text-4xl">Live Quotes (CAD)</h2>
-              {Object.entries(quotes).map(([lp,r])=>(
-                <div key={lp} className={`p-8 rounded-3xl border ${form.lp===lp?'border-purple-500 bg-purple-900/30':'border-gray-700'}`}>
-                  <p className="text-3xl font-bold capitalize">{lp}</p>
-                  <div className="grid grid-cols-3 gap-8 text-2xl mt-6">
-                    <div>USDC<br/><b>{r.USDC}</b></div>
-                    <div>USDT<br/><b>{r.USDT}</b></div>
-                    <div>BTC<br/><b>{r.BTC?.toLocaleString()}</b></div>
-                  </div>
-                </div>
-              ))}
+<body>
+  <div class="container">
+    <h1>SPLAT Business Dashboard</h1>
+    <div class="grid">
+      <div class="card">
+        <h2>Execute Trade</h2>
+        <p class="text-2xl mb-4">Balance: <span class="text-green-400 font-bold">$50,000 CAD</span></p>
+        <select id="lp">
+          <option value="newton">Newton</option>
+          <option value="virgocx">VirgoCX</option>
+          <option value="bitbuy">Bitbuy</option>
+        </select>
+        <select id="token">
+          <option>USDC</option>
+          <option>USDT</option>
+          <option>BTC</option>
+        </select>
+        <input type="number" id="amount" value="10000" placeholder="Amount">
+        <button onclick="executeTrade()">EXECUTE SELL</button>
+        <div id="status" class="status">Ready</div>
+        <div id="hash" class="hash"></div>
+      </div>
+      <div class="card">
+        <h2>Live Quotes (CAD)</h2>
+        <div id="quotes"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const API = 'https://ramplayer-core-2025-production-c338.up.railway.app';
+    let balance = 50000;
+    let quotes = {};
+
+    function loadQuotes() {
+      fetch(API + '/quotes').then(r => r.json()).then(data => {
+        quotes = data.quotes;
+        document.getElementById('quotes').innerHTML = Object.entries(quotes).map(([lp, r]) => `
+          <div class="quote ${document.getElementById('lp').value === lp ? 'active' : ''}">
+            <p class="font-bold">${lp.toUpperCase()}</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+              <div>USDC: <b>${r.USDC}</b></div>
+              <div>USDT: <b>${r.USDT}</b></div>
+              <div>BTC: <b>${r.BTC.toLocaleString()}</b></div>
             </div>
           </div>
-        </div>
-      );
+        `).join('');
+      });
     }
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+    function executeTrade() {
+      const lp = document.getElementById('lp').value;
+      const token = document.getElementById('token').value;
+      const amount = Number(document.getElementById('amount').value);
+      document.getElementById('status').innerHTML = 'Processing...';
+      fetch(API + '/transaction', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({amountCAD: amount, direction: 'sell', exchange: lp, token})
+      }).then(r => r.json()).then(data => {
+        balance = data.newBalance;
+        document.getElementById('status').innerHTML = `Success – Fee: $${data.fee}`;
+        document.getElementById('hash').innerHTML = `Tx: ${data.hash}`;
+        document.querySelector('.text-green-400').innerHTML = '$' + balance.toLocaleString() + ' CAD';
+        loadQuotes();
+      }).catch(() => document.getElementById('status').innerHTML = 'Failed');
+    }
+
+    loadQuotes();
   </script>
 </body>
 </html>
