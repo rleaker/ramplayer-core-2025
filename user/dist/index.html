@@ -4,72 +4,98 @@
   <meta charset="utf-8">
   <title>SPLAT Business Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script type="module">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/socket.io-client@4/dist/socket.io.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { background: linear-gradient(to bottom right, #581c87, #000, #1f2937); color: #f9fafb; font-family: system-ui; min-height: 100vh; }
+    .container { max-width: 80rem; margin: 0 auto; padding: 2rem; }
+    h1 { text-align: center; background: linear-gradient(to right, #c084fc, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 3rem; font-weight: bold; margin-bottom: 3rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .card { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(139,92,246,0.3); padding: 2.5rem; border-radius: 1.5rem; }
+    h2 { font-size: 1.875rem; margin-bottom: 2rem; }
+    select, input { width: 100%; padding: 1rem; background: #1f2937; border-radius: 0.75rem; border: 1px solid #374151; color: #f9fafb; font-size: 1.125rem; margin-bottom: 1rem; }
+    button { width: 100%; padding: 1.5rem; background: linear-gradient(to right, #9333ea, #ec4899); border: none; border-radius: 0.75rem; color: white; font-size: 1.25rem; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+    button:hover { transform: scale(1.02); }
+    .status { margin-top: 1.5rem; font-size: 1.25rem; padding: 1rem; background: #1f2937; border-radius: 0.5rem; }
+    .quote-card { padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1rem; }
+    .active { background: rgba(139,92,246,0.2); border-color: #a78bfa; }
+    .hash { font-family: monospace; word-break: break-all; font-size: 0.875rem; color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
     const API = 'https://ramplayer-core-2025-production-c338.up.railway.app';
-    import { createRoot } from 'https://esm.sh/react@18/umd/react.production.min.js';
-    import ReactDOM from 'https://esm.sh/react-dom@18/umd/react-dom.production.min.js';
-    import axios from 'https://esm.sh/axios';
-    import { io } from 'https://esm.sh/socket.io-client';
-
     function App() {
-      const [b, setB] = React.useState(50000);
-      const [q, setQ] = React.useState({});
-      const [s, setS] = React.useState({exchange:'virgocx',token:'USDC',amount:10000,direction:'sell'});
-      const [status, setStatus] = React.useState('Ready');
-      const [hash, setHash] = React.useState('');
-
-      React.useEffect(() => {
-        axios.get(API+'/quotes').then(r=>setQ(r.data.quotes));
+      const [balance, setBalance] = useState(50000);
+      const [quotes, setQuotes] = useState({});
+      const [selected, setSelected] = useState({ exchange: 'virgocx', token: 'USDC', amount: 10000, direction: 'sell' });
+      const [status, setStatus] = useState('Ready');
+      const [txHash, setTxHash] = useState('');
+      useEffect(() => {
+        axios.get(API + '/quotes').then(r => setQuotes(r.data.quotes));
         const socket = io(API);
-        socket.on('tx-update', d=>{setStatus(`Confirmed – ${d.confirmations}/12`);setHash(d.hash);});
-        return ()=>socket.close();
+        socket.on('tx-update', d => {
+          setStatus(`Confirmed – ${d.confirmations}/12`);
+          setTxHash(d.hash);
+        });
+        return () => socket.close();
       }, []);
-
-      const exec = async () => {
+      const execute = async () => {
         setStatus('Processing...');
         try {
-          const res = await axios.post(API+'/transaction', s);
-          setB(res.data.newBalance);
+          const res = await axios.post(API + '/transaction', selected);
+          setBalance(res.data.newBalance);
           setStatus(`Success – Fee: $${res.data.fee}`);
-          setHash(res.data.hash);
-        } catch { setStatus('Failed'); }
+          setTxHash(res.data.hash);
+        } catch (e) {
+          setStatus('Failed');
+        }
       };
-
-      return React.createElement('div', {className:"min-h-screen bg-gradient-to-br from-purple-900 via-black to-gray-900 p-8"}
-        React.createElement('div', {className:"max-w-5xl mx-auto"}, 
-          React.createElement('h1', {className:"text-5xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"}, "SPLAT – Institutional Middleware"),
-          React.createElement('div', {className:"grid lg:grid-cols-2 gap-10"},
-            React.createElement('div', {className:"bg-black/60 backdrop-blur border border-purple-500/30 p-10 rounded-3xl"},
-              React.createElement('h2', {className:"text-3xl mb-8"}, "Execute Trade"),
-              React.createElement('div', {className:"text-2xl mb-6"}, "Balance: ", React.createElement('span', {className:"text-green-400 font-bold"}, "$"+b.toLocaleString()+" CAD")),
-              ['virgocx','newton','bitbuy'].map(ex=>React.createElement('button', {key:ex,className:`block w-full p-4 mb-3 rounded ${s.exchange===ex?'bg-purple-700':'bg-gray-800'}`,onClick:()=>setS({...s,exchange:ex})}, ex.toUpperCase())),
-              ['USDC','USDT','BTC'].map(t=>React.createElement('button', {key:t,className:`block w-full p-4 mb-3 rounded ${s.token===t?'bg-purple-700':'bg-gray-800'}`,onClick:()=>setS({...s,token:t})}, t)),
-              React.createElement('input', {type:"number",value:s.amount,onChange:e=>setS({...s,amount:+e.target.value}),className:"w-full p-4 bg-gray-900 rounded-xl text-xl mb-6"}),
-              React.createElement('button', {onClick:exec,className:"w-full py-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-2xl font-bold"}, "EXECUTE SELL"),
-              React.createElement('div', {className:"mt-6 text-xl"}, "Status: ", status),
-              hash && React.createElement('div', {className:"text-sm break-all mt-2"}, "Tx: ", hash)
-            ),
-            React.createElement('div', {className:"bg-black/60 backdrop-blur border border-purple-500/30 p-10 rounded-3xl"},
-              React.createElement('h2', {className:"text-3xl mb-6"}, "Live Quotes"),
-              Object.entries(q).map(([lp,rates])=>React.createElement('div', {key:lp,className:`p-6 rounded-xl mb-4 ${s.exchange===lp?'bg-purple-900/70':'bg-gray-900'}`},
-                React.createElement('p', {className:"font-bold text-xl"}, lp.toUpperCase()),
-                React.createElement('div', {className:"grid grid-cols-3 gap-4 mt-3"},
-                  React.createElement('div', null, "USDC ", React.createElement('br'), React.createElement('span', {className:"text-2xl font-bold"}, rates.USDC)),
-                  React.createElement('div', null, "USDT ", React.createElement('br'), React.createElement('span', {className:"text-2xl font-bold"}, rates.USDT)),
-                  React.createElement('div', null, "BTC ", React.createElement('br'), React.createElement('span', {className:"text-2xl font-bold"}, rates.BTC?.toLocaleString()))
-                )
-              ))
-            )
-          )
-        )
+      return (
+        <div className="container">
+          <h1>SPLAT Business Dashboard</h1>
+          <div className="grid">
+            <div className="card">
+              <h2>Execute Trade</h2>
+              <div className="text-2xl mb-6">Balance: <span className="text-green-400 font-bold">${balance.toLocaleString()} CAD</span></div>
+              <select value={selected.exchange} onChange={e => setSelected({...selected, exchange: e.target.value})} className="text-xl">
+                <option value="newton">Newton</option>
+                <option value="virgocx">VirgoCX</option>
+                <option value="bitbuy">Bitbuy</option>
+              </select>
+              <select value={selected.token} onChange={e => setSelected({...selected, token: e.target.value})} className="text-xl">
+                <option>USDC</option>
+                <option>USDT</option>
+                <option>BTC</option>
+              </select>
+              <input type="number" value={selected.amount} onChange={e => setSelected({...selected, amount: Number(e.target.value)})} className="text-xl" />
+              <button onClick={execute}>EXECUTE {selected.direction.toUpperCase()}</button>
+              <div className="status">{status}</div>
+              {txHash && <div className="hash">Tx: {txHash}</div>}
+            </div>
+            <div className="card">
+              <h2>Live Quotes (CAD)</h2>
+              {Object.entries(quotes).map(([lp, rates]) => (
+                <div key={lp} className={`quote-card ${selected.exchange === lp ? 'active' : ''}`}>
+                  <p className="font-bold text-xl capitalize">{lp}</p>
+                  <div className="grid grid-cols-3 gap-4 mt-3 text-lg">
+                    <div>USDC <br /><span className="text-2xl font-bold">{rates.USDC}</span></div>
+                    <div>USDT <br /><span className="text-2xl font-bold">{rates.USDT}</span></div>
+                    <div>BTC <br /><span className="text-2xl font-bold">{rates.BTC.toLocaleString()}</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       );
     }
-
-    const root = createRoot(document.getElementById('root'));
-    root.render(React.createElement(App));
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
-</head>
-<body class="bg-gradient-to-br from-purple-900 via-black to-gray-900 min-h-screen">
-  <div id="root"></div>
 </body>
 </html>
