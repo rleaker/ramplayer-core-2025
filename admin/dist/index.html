@@ -6,61 +6,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <style>
-    body { background: #111827; color: #f9fafb; font-family: system-ui; min-height: 100vh; }
-    .container { max-width: 6rem; margin: 0 auto; padding: 2rem; }
-    h1 { font-size: 3rem; font-weight: bold; margin-bottom: 2.5rem; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
-    .metric { background: linear-gradient(to bottom right, #7c3aed, #a855f7); padding: 2rem; border-radius: 1rem; text-align: center; }
-    h2 { font-size: 1.25rem; opacity: 0.9; margin-bottom: 0.5rem; }
-    .number { font-size: 3rem; font-weight: bold; }
-    .tx-list { background: #1f2937; padding: 2rem; border-radius: 1rem; }
-    .tx-item { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #374151; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-950 text-white min-h-screen p-12">
   <div id="root"></div>
   <script type="text/babel">
-    const { useState } = React;
     function App() {
-      const metrics = [
-        { title: 'Total Volume', value: '$12,847,200', color: 'from-purple-600 to-purple-800' },
-        { title: 'Revenue @ 10 bps', value: '$12,847', color: 'from-green-600 to-green-800' },
-        { title: 'Active LPs', value: '3', color: 'from-blue-600 to-blue-800' },
-        { title: 'Live Tx', value: '47', color: 'from-orange-600 to-red-600' }
-      ];
-      const txs = [
-        { hash: '0x4a8f...9b2e', amount: 250000, token: 'USDC', fee: 250, lp: 'VirgoCX' },
-        { hash: '0x9f1c...3d8a', amount: 85000, token: 'BTC', fee: 85, lp: 'Bitbuy' },
-        { hash: '0x2b7e...1f4c', amount: 100000, token: 'USDT', fee: 100, lp: 'Newton' }
-      ];
       return (
-        <div className="container">
-          <h1>SPLAT Revenue Admin</h1>
-          <div className="grid">
-            {metrics.map(m => (
-              <div key={m.title} className={`metric bg-gradient-to-br ${m.color}`}>
-                <h2>{m.title}</h2>
-                <div className="number">{m.value}</div>
-              </div>
-            ))}
-          </div>
-          <div className="tx-list">
-            <h2 className="text-2xl mb-6">Latest Transactions</h2>
-            {txs.map(tx => (
-              <div key={tx.hash} className="tx-item">
-                <div>
-                  <p className="font-mono text-sm">{tx.hash}</p>
-                  <p>{tx.amount.toLocaleString()} {tx.token} → CAD via {tx.lp}</p>
-                </div>
-                <p className="text-2xl text-green-400">+${tx.fee}</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-6xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">SPLAT Revenue Admin</h1>
+          <div className="grid grid-cols-4 gap-8 mb-16">
+            {[
+              {label:'Total Volume',val:'$12.8M',grad:'from-purple-600 to-purple-800'},
+              {label:'Revenue @ 10 bps',val:'$12,847',grad:'from-green-600 to-green-800'},
+              {label:'Active LPs',val:'3',grad:'from-blue-600 to-blue-800'},
+              {label:'Live Tx',val:'47',grad:'from-orange-600 to-red-600'}
+            ].map(m=>(
+              <div key={m.label} className={`p-10 rounded-3xl bg-gradient-to-br ${m.grad} text-center`}>
+                <p className="text-xl opacity-90">{m.label}</p>
+                <p className="text-5xl font-bold mt-4">{m.val}</p>
               </div>
             ))}
           </div>
         </div>
       );
     }
-    ReactDOM.render(<App />, document.getElementById('root'));
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
