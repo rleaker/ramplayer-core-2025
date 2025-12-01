@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <title>SPLAT Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script type="module">
+    import React from 'https://esm.sh/react@18';
+    import ReactDOM from 'https://esm.sh/react-dom@18';
+    const data = {volume:12847200,rev:12847,lps:3,tx:47};
+    function App() {
+      return React.createElement('div', {className:"max-w-6xl mx-auto p-8 text-white"},
+        React.createElement('h1', {className:"text-5xl font-bold mb-10"}, "SPLAT Revenue Admin"),
+        React.createElement('div', {className:"grid grid-cols-4 gap-6 mb-12"},
+          React.createElement('div', {className:"bg-gradient-to-br from-purple-600 to-purple-800 p-8 rounded-2xl"}, "Total Volume", React.createElement('p', {className:"text-5xl font-bold mt-2"}, "$12.8M")),
+          React.createElement('div', {className:"bg-gradient-to-br from-green-600 to-green-800 p-8 rounded-2xl"}, "Revenue @ 10 bps", React.createElement('p', {className:"text-5xl font-bold mt-2"}, "$12,847")),
+          React.createElement('div', {className:"bg-gradient-to-br from-blue-600 to-blue-800 p-8 rounded-2xl"}, "Active LPs", React.createElement('p', {className:"text-5xl font-bold mt-2"}, "3")),
+          React.createElement('div', {className:"bg-gradient-to-br from-orange-600 to-red-600 p-8 rounded-2xl"}, "Live Tx", React.createElement('p', {className:"text-5xl font-bold mt-2"}, "47"))
+        )
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</head>
+<body class="bg-gray-950 min-h-screen"><div id="root"></div></body>
+</html>
