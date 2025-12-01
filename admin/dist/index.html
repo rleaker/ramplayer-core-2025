@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="utf-8">
-  <title>SPLAT Admin</title>
+  <meta charset="utf-8"><title>SPLAT Admin</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -11,27 +10,22 @@
 <body class="bg-gray-950 text-white min-h-screen p-12">
   <div id="root"></div>
   <script type="text/babel">
-    function App() {
+    function App(){
       return (
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-6xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">SPLAT Revenue Admin</h1>
-          <div className="grid grid-cols-4 gap-8 mb-16">
-            {[
-              {label:'Total Volume',val:'$12.8M',grad:'from-purple-600 to-purple-800'},
-              {label:'Revenue @ 10 bps',val:'$12,847',grad:'from-green-600 to-green-800'},
-              {label:'Active LPs',val:'3',grad:'from-blue-600 to-blue-800'},
-              {label:'Live Tx',val:'47',grad:'from-orange-600 to-red-600'}
-            ].map(m=>(
-              <div key={m.label} className={`p-10 rounded-3xl bg-gradient-to-br ${m.grad} text-center`}>
-                <p className="text-xl opacity-90">{m.label}</p>
-                <p className="text-5xl font-bold mt-4">{m.val}</p>
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-7xl font-bold mb-16 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">SPLAT Revenue Admin</h1>
+          <div className="grid grid-cols-4 gap-12">
+            {[{l:'Total Volume',v:'$12.8M'},{l:'Revenue @ 10 bps',v:'$12,847'},{l:'Active LPs',v:'3'},{l:'Live Tx',v:'47'}].map(m=>(
+              <div key={m.l} className="bg-gradient-to-br from-purple-600 to-pink-600 p-12 rounded-3xl">
+                <p className="text-2xl opacity-90">{m.l}</p>
+                <p className="text-6xl font-bold mt-6">{m.v}</p>
               </div>
             ))}
           </div>
         </div>
       );
     }
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
   </script>
 </body>
 </html>
