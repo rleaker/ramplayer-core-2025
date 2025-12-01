@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <title>SPLAT LP Panel</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script type="module">
+    import React from 'https://esm.sh/react@18';
+    import ReactDOM from 'https://esm.sh/react-dom@18';
+    function App() {
+      const [s,setS] = React.useState({USDC:0.28,USDT:0.30,BTC:0.45});
+      return React.createElement('div', {className:"max-w-4xl mx-auto p-8 text-white"},
+        React.createElement('h1', {className:"text-4xl font-bold mb-8"}, "Liquidity Provider Panel – VirgoCX"),
+        React.createElement('div', {className:"bg-gray-900 p-8 rounded-xl"},
+          React.createElement('h2', {className:"text-2xl mb-6"}, "Set Your Spread (%)"),
+          React.createElement('div', {className:"grid grid-cols-3 gap-6"},
+            ['USDC','USDT','BTC'].map(t=>React.createElement('div', {key:t},
+              React.createElement('label', null, t+"/CAD"),
+              React.createElement('input', {type:"number",step:"0.01",value:s[t],onChange:e=>setS({...s,[t]:+e.target.value}),className:"w-full p-4 bg-gray-800 rounded text-2xl"})
+            ))
+          ),
+          React.createElement('button', {className:"mt-8 px-12 py-4 bg-green-600 rounded text-xl font-bold"}, "PUSH LIVE SPREAD")
+        ")
+        )
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</head>
+<body class="bg-gray-950 min-h-screen"><div id="root"></div></body>
+</html>
